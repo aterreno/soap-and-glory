@@ -20,15 +20,23 @@ app.use(function (req, res, next) {
   next();
 });
 
-app.get('/', function (req, res) {
-  var result = weather.getWeatherByCityAndCountry("Torino", "Italy", res);
-});
+var v1 = express.Router();
+var v2 = express.Router();
+ 
+v1.use('/weather', express.Router()
+  .get('/:countryName/:cityName', weather.getWeatherByCityAndCountry));
+ 
+v2.use('/weather', express.Router()
+  .get('/:countryName/:cityName', weather.getWeatherByCityAndCountry));
+ 
+app.use('/v1', v1);
+app.use('/v2', v2);
 
 var server = app.listen(3000, function () {
 
   var host = server.address().address
   var port = server.address().port
 
-  console.log('Example app listening at http://%s:%s', host, port)
+  console.log('Server listening at http://%s:%s', host, port)
 
 });
